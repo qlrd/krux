@@ -37,7 +37,7 @@ jobs:
 
       - name: Build for M5StickV
         if: matrix.device == 'maixpy_m5stickv'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           build-args: DEVICE=maixpy_m5stickv
@@ -61,7 +61,7 @@ jobs:
 
       - name: Build for Amigo IPS
         if: matrix.device == 'maixpy_amigo_ips'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           build-args: DEVICE=maixpy_amigo_ips
@@ -85,7 +85,7 @@ jobs:
 
       - name: Build for Amigo TFT
         if: matrix.device == 'maixpy_amigo_tft'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           build-args: DEVICE=maixpy_amigo_tft
@@ -109,7 +109,7 @@ jobs:
 
       - name: Build for Bit
         if: matrix.device == 'maixpy_bit'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           build-args: DEVICE=maixpy_bit
@@ -133,7 +133,7 @@ jobs:
 
       - name: Build for Dock
         if: matrix.device == 'maixpy_dock'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           build-args: DEVICE=maixpy_dock
