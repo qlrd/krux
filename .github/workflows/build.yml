@@ -48,7 +48,7 @@ jobs:
       - name: Extract firmware for M5StickV
         id: extract-m5stickv
         if: matrix.device == 'maixpy_m5stickv'
-        uses: shrink/actions-docker-extract@v2
+        uses: shrink/actions-docker-extract@v3
         with:
           image: localhost:5000/selfcustody/krux-builder-m5stickv:latest
           path: /src/firmware/Kboot/build/.
@@ -72,7 +72,7 @@ jobs:
       - name: Extract firmware for Amigo IPS
         id: extract-amigo-ips
         if: matrix.device == 'maixpy_amigo_ips'
-        uses: shrink/actions-docker-extract@v2
+        uses: shrink/actions-docker-extract@v3
         with:
           image: localhost:5000/selfcustody/krux-builder-amigo-ips:latest
           path: /src/firmware/Kboot/build/.
@@ -96,7 +96,7 @@ jobs:
       - name: Extract firmware for Amigo TFT
         id: extract-amigo-tft
         if: matrix.device == 'maixpy_amigo_tft'
-        uses: shrink/actions-docker-extract@v2
+        uses: shrink/actions-docker-extract@v3
         with:
           image: localhost:5000/selfcustody/krux-builder-amigo-tft:latest
           path: /src/firmware/Kboot/build/.
@@ -120,7 +120,7 @@ jobs:
       - name: Extract firmware for Bit
         id: extract-bit
         if: matrix.device == 'maixpy_bit'
-        uses: shrink/actions-docker-extract@v2
+        uses: shrink/actions-docker-extract@v3
         with:
           image: localhost:5000/selfcustody/krux-builder-bit:latest
           path: /src/firmware/Kboot/build/.
@@ -144,7 +144,7 @@ jobs:
       - name: Extract firmware for Dock
         id: extract-dock
         if: matrix.device == 'maixpy_dock'
-        uses: shrink/actions-docker-extract@v2
+        uses: shrink/actions-docker-extract@v3
         with:
           image: localhost:5000/selfcustody/krux-builder-dock:latest
           path: /src/firmware/Kboot/build/.
