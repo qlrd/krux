@@ -1,0 +1,1885 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Krux is open-source firmware that enables anyone to build their own Bitcoin signing device via off-the-shelf parts.">
+      
+      
+      
+        <link rel="canonical" href="https://selfcustody.github.io/krux/getting-started/features/tamper-detection/">
+      
+      
+        <link rel="prev" href="../tinyseed/">
+      
+      
+        <link rel="next" href="../../settings/">
+      
+      
+      <link rel="icon" href="../../../img/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.28">
+    
+    
+      
+        <title>Tamper Detection - Krux - Open-source signing device firmware for Bitcoin</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../css/custom.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tamper-detection-mechanism-experimental" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Krux - Open-source signing device firmware for Bitcoin" class="md-header__button md-logo" aria-label="Krux - Open-source signing device firmware for Bitcoin" data-md-component="logo">
+      
+  <img src="../../../img/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Krux - Open-source signing device firmware for Bitcoin
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tamper Detection
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/selfcustody/krux" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../parts/" class="md-tabs__link">
+        
+  
+    
+  
+  Devices and Parts List
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../faq/" class="md-tabs__link">
+        
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../troubleshooting/" class="md-tabs__link">
+        
+  
+    
+  
+  Troubleshooting
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../uncommon-questions/" class="md-tabs__link">
+        
+  
+    
+  
+  Uncommon Questions
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../support/" class="md-tabs__link">
+        
+  
+    
+  
+  Support the Project
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Krux - Open-source signing device firmware for Bitcoin" class="md-nav__button md-logo" aria-label="Krux - Open-source signing device firmware for Bitcoin" data-md-component="logo">
+      
+  <img src="../../../img/favicon.png" alt="logo">
+
+    </a>
+    Krux - Open-source signing device firmware for Bitcoin
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/selfcustody/krux" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../installing/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Installing
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Installing
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../installing/from-gui/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    From GUI application
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2_2" id="__nav_2_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            From GUI application
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-gui/windows/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Windows
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-gui/macos-intel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MacOS Intel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-gui/macos-arm64/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MacOS ARM64
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-gui/debian-like/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Debian-like
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-gui/fedora-like/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Fedora-like
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-gui/other-linux-distro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Other linux distro
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-gui/usage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-pre-built-release/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From pre-built official release
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-test-release/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From pre-built test release
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installing/from-source/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From source
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Basic Usage
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Basic Usage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/generating-a-mnemonic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generating a Mnemonic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/loading-a-mnemonic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Loading a Mnemonic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/navigating-the-main-menu/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Navigating the Main Menu
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/setting-a-coordinator-and-signing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setting a Coordinator and Signing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/video-tutorials/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Video Tutorials
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../encrypted-mnemonics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Encrypted Mnemonics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../printing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Printing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sd-card-update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SD Card Updates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../QR-transcript-tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Transcribing QR Codes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../entropy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Empirical Entropy Measurement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tinyseed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tiny Seed and other metal plates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Tamper Detection
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Tamper Detection
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#krux-security-model-good-practices-and-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Krux Security Model - Good Practices and Limitations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Krux Security Model - Good Practices and Limitations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#firmware-verification-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Firmware Verification Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommendations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-tamper-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting Up Tamper Detection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-krux-tamper-detection-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How Krux Tamper Detection Works
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tamper-check-code-tc-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tamper Check Code (TC Code)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tamper Check Code (TC Code)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enhancing-tamper-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enhancing Tamper Detection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tamper-check-flash-hash-tc-flash-hash-a-tamper-detection-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tamper Check Flash Hash (TC Flash Hash) - A Tamper Detection Tool
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tamper Check Flash Hash (TC Flash Hash) - A Tamper Detection Tool">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filling-empty-flash-memory-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filling Empty Flash Memory Blocks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ensuring-tamper-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ensuring Tamper Detection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executing-tc-flash-hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executing TC Flash Hash
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#potential-attack-scenarios-and-their-mitigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Potential Attack Scenarios and Their Mitigation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Potential Attack Scenarios and Their Mitigation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#challenge-for-an-attacker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Challenge for an Attacker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-tampered-firmware-cannot-bypass-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Tampered Firmware Cannot Bypass Verification
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#possible-attack-strategies-and-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      Possible Attack Strategies and Failures
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../settings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Settings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../navigation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Navigation Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../parts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Devices and Parts List
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../uncommon-questions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Uncommon Questions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../support/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Support the Project
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="tamper-detection-mechanism-experimental">Tamper Detection Mechanism (Experimental)<a class="headerlink" href="#tamper-detection-mechanism-experimental" title="Permanent link">&para;</a></h1>
+<p>Krux's tamper detection tool combines cryptographic hashes, a <em>Tamper Check Code (TC Code)</em>, and camera-generated entropy to create a tamper indicator that is unique to each device, represented by a memorable image and two sets of two words.</p>
+<p>Before we get into details, let's start with some limitations and necessary prerequisites to allow the feature to work.</p>
+<h2 id="krux-security-model-good-practices-and-limitations">Krux Security Model - Good Practices and Limitations<a class="headerlink" href="#krux-security-model-good-practices-and-limitations" title="Permanent link">&para;</a></h2>
+<p>To secure your Krux device, always verify firmware authenticity before installation, particularly when flashing via USB.</p>
+<h3 id="firmware-verification-methods">Firmware Verification Methods<a class="headerlink" href="#firmware-verification-methods" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Using OpenSSL Command-Line Tool:</strong> Follow <a href="../../installing/from-pre-built-release/#verify-the-files">from pre-built official release</a> instructions to verify the firmware's signature manually. This method provides a high level of assurance but requires familiarity with command-line operations.</p>
+</li>
+<li>
+<p><strong>Using Krux-Installer:</strong> Our <a href="../../installing/from-gui/">Krux-Installer GUI</a> can facilitate this process by downloading our firmware from Github and verifying its signature. It also guides you through manual verification if desired. Just don't forget to verify the integrity of the Krux-Installer as well.</p>
+</li>
+</ul>
+<h3 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Build from Source:</strong> Consider building the firmware <a href="../../installing/from-source/">from source code</a> and verifying its <a href="../../installing/from-source/#reproducibility">reproducibility</a> for maximum assurance.</p>
+</li>
+<li>
+<p><strong>Use SD Card for Updates:</strong> After the initial flash through USB, perform subsequent <a href="../sd-card-update/">updates via the SD card</a>. This keeps your device air-gapped and allows the existing firmware to verify the new one before installation.</p>
+</li>
+</ul>
+<p>Note: The effectiveness of <em>TC Flash Hash</em> tamper detection feature relies on running legitimate, uncompromised firmware and safely protecting your <em>TC Code</em>.</p>
+<h3 id="setting-up-tamper-detection">Setting Up Tamper Detection<a class="headerlink" href="#setting-up-tamper-detection" title="Permanent link">&para;</a></h3>
+<p>To help ensure the integrity of your device’s firmware, you can set up tamper detection tools, called <em>Tamper Check (TC) Flash Hash</em> and a <em>Tamper Check (TC) Code</em>. The <em>TC Code</em> must be at least six characters long, and for best security, should include a mix of letters, numbers, and special characters. You can create or change your <em>TC Code</em> by going to <code>Settings -&gt; Security -&gt; Tamper Check Code</code>.</p>
+<p>Ensure that your <em>TC Code</em> remains confidential and challenging to guess, as its security directly influences the effectiveness of your tamper detection.</p>
+<p>Once configured, your <em>TC Code</em> will be required to run <em>TC Flash Hash</em>. You can run TC Flash Hash at any time by navigating to <code>Tools -&gt; Flash Tools -&gt; TC Flash Hash</code>. Alternatively, enable automatic checks on every boot by selecting <code>Settings -&gt; Security -&gt; TC Flash Hash at Boot</code>.</p>
+<p>When you enable the <em>TC Flash Hash at Boot</em> feature, the device will require you to enter your TC Code at each startup, ensuring routine integrity checks. This also prevents device usage unless the correct code is entered.</p>
+<p><em>TC Flash Hash</em> produces a unique visual and verbal signature (an image and two sets of words) that helps you instantly recognize unauthorized changes. See below for details on how it works and what to expect from its output.</p>
+<h3 id="how-krux-tamper-detection-works">How Krux Tamper Detection Works<a class="headerlink" href="#how-krux-tamper-detection-works" title="Permanent link">&para;</a></h3>
+<h2 id="tamper-check-code-tc-code">Tamper Check Code (TC Code)<a class="headerlink" href="#tamper-check-code-tc-code" title="Permanent link">&para;</a></h2>
+<p>Before being stored in the device’s flash, the <em>TC Code</em> is hashed together with the K210 chip’s unique ID and stretched using PBKDF2. This ensures the <em>TC Code</em> is not retrievable via a flash dump and can only be brute-forced outside the device if the attacker also has access to the device’s unique ID (UID). By allowing letters, special characters, and running 100k iterations of PBKDF2, brute-forcing the <em>TC Code</em> from dumped data becomes more time-consuming and resource-intensive.</p>
+<h3 id="enhancing-tamper-detection">Enhancing Tamper Detection<a class="headerlink" href="#enhancing-tamper-detection" title="Permanent link">&para;</a></h3>
+<p>After setting the <em>TC Code</em>, you are prompted to fill empty flash memory blocks with random entropy from the camera. This process ensures that attackers cannot exploit unused memory space.</p>
+<h2 id="tamper-check-flash-hash-tc-flash-hash-a-tamper-detection-tool">Tamper Check Flash Hash (TC Flash Hash) - A Tamper Detection Tool<a class="headerlink" href="#tamper-check-flash-hash-tc-flash-hash-a-tamper-detection-tool" title="Permanent link">&para;</a></h2>
+<p>The <em>TC Flash Hash</em> tool enables you to verify if the device's internal flash memory content has been altered. This tool generates a unique image and two sets of two tamper detection words based on a hash of your <em>TC Code</em>, the device's UID, and its internal flash content. The flash memory is divided into two regions:</p>
+<ul>
+<li>
+<p><strong>Firmware Region:</strong> The area only filled with firmware code. It generates the memorable image and the first set of two words.</p>
+</li>
+<li>
+<p><strong>User's Region:</strong> The area used to stored encrypted mnemonics, settings and TC Code. It generates the last set of two words.</p>
+</li>
+</ul>
+<div style="text-align: center;">
+    <img src="../../../img/flash_hash.png" alt="TC Flash Hash" width="200"/>
+</div>
+
+<p><em>Example: The blue symbol and words 'tail monkey' represent the firmware region, while 'wrestle over' user's region.</em></p>
+<p>Any change in the flash content results in a different image and words:</p>
+<ul>
+<li>
+<p><strong>Firmware Changes:</strong> Alterations in the firmware region, including the bootloader, change the image and the first set of two words.</p>
+</li>
+<li>
+<p><strong>User's Data Changes:</strong> Changes in the user's region, such as new settings or stored mnemonics, change the last set of two words.</p>
+</li>
+<li>
+<p><strong><em>TC Code</em> Changes:</strong> Replacing the <em>TC Code</em> alters the image and all sets of words.</p>
+</li>
+</ul>
+<h3 id="filling-empty-flash-memory-blocks">Filling Empty Flash Memory Blocks<a class="headerlink" href="#filling-empty-flash-memory-blocks" title="Permanent link">&para;</a></h3>
+<p>Use this to enhance tamper detection. Krux performs a memory sweep while capturing a live feed from the camera. Whenever an empty block is found in the flash memory, it uses the data from the image to fill these empty spaces with rich, random entropy. It estimates the image's entropy by evaluating its color variance waiting until a minimum threshold is met. </p>
+<h3 id="ensuring-tamper-detection">Ensuring Tamper Detection<a class="headerlink" href="#ensuring-tamper-detection" title="Permanent link">&para;</a></h3>
+<p>The <em>TC Flash Hash</em> function securely hashes the combination of the <em>TC Code</em>, device's UID, and flash memory contents. The hash properties ensure that without knowing these three elements, an attacker will not be able to reproduce the <em>TC Flash Hash</em> results.</p>
+<h2 id="executing-tc-flash-hash">Executing <em>TC Flash Hash</em><a class="headerlink" href="#executing-tc-flash-hash" title="Permanent link">&para;</a></h2>
+<p>After setting a <em>TC Code</em> user can use the <em>TC Flash Hash</em> feature, available in <code>Tools -&gt; Flash Tools -&gt; TC Flash Hash</code>.</p>
+<p>By navigating to <code>Settings -&gt; Security -&gt; TC Flash Hash at Boot</code>, users can set Krux to always require <em>TC Flash Hash</em> verification after device is turned on. If a wrong <em>TC Code</em> is typed at boot, the device will turn off. Nothing else will happen if the wrong <em>TC Code</em> is entered multiple times. As <em>TC Code</em> verification data is stored in the user's region of memory, the requirement to type at boot is disabled if the user <a href="../tools/#erase-users-data">erases user's data</a> or <a href="../../installing/from-gui/usage/#wipe-device">wipe device</a>. Flashing an older firmware version, prior to <em>TC Flash Hash</em> support, will also disable this feature.</p>
+<h2 id="potential-attack-scenarios-and-their-mitigation">Potential Attack Scenarios and Their Mitigation<a class="headerlink" href="#potential-attack-scenarios-and-their-mitigation" title="Permanent link">&para;</a></h2>
+<h3 id="challenge-for-an-attacker">Challenge for an Attacker<a class="headerlink" href="#challenge-for-an-attacker" title="Permanent link">&para;</a></h3>
+<p>An attacker faces major challenges in replacing the firmware:</p>
+<ul>
+<li>
+<p><strong>Lack of Original Flash Data:</strong> Without the exact original flash content, attackers cannot reproduce the correct hash.</p>
+</li>
+<li>
+<p><strong>Sequential Hash Dependency:</strong> The hash function processes data sequentially (<em>TC Code</em>, device's UID, and flash memory contents), preventing the attacker from injecting or rearranging data to produce the same hash.</p>
+</li>
+<li>
+<p><strong>One-Way Hash Functions:</strong> Cryptographic hash functions like SHA-256 are one-way, making it infeasible to reverse-engineer or manipulate the hash without the original inputs.</p>
+</li>
+</ul>
+<h3 id="why-tampered-firmware-cannot-bypass-verification">Why Tampered Firmware Cannot Bypass Verification<a class="headerlink" href="#why-tampered-firmware-cannot-bypass-verification" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Cannot Reconstruct the Hash:</strong> Without the original flash data, attackers cannot generate the correct hash, even if they know the device's UID and the <em>TC Code</em> (after the user enters it).</p>
+</li>
+<li>
+<p><strong>Hash Sensitivity:</strong> Any alteration in the flash content changes the hash output, which will be evident through a different image and words.</p>
+</li>
+<li>
+<p><strong>Entropy Filling:</strong> Filling empty flash blocks with camera-generated entropy leaves no space for malicious code and any changes to these blocks will alter the hash.</p>
+</li>
+</ul>
+<h3 id="possible-attack-strategies-and-failures">Possible Attack Strategies and Failures<a class="headerlink" href="#possible-attack-strategies-and-failures" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Precomputing Hashes:</strong> The attacker cannot precompute the correct hash without the <em>TC Code</em>, device's UID, and exact contents of the flash memory.</p>
+</li>
+<li>
+<p><strong>Storing Hashes:</strong> Storing <code>hash(flash_content)</code> is ineffective because the overall hash depends on the sequential combination of <em>TC Code</em>, device's UID, and the flash data.</p>
+</li>
+<li>
+<p><strong>Inserting Malicious Code:</strong> Attempting to insert code into empty spaces fails because after the entropy filling process, the hash verification will detect any changes.</p>
+</li>
+<li>
+<p><strong>Using an SD Card to Store a Copy of Original Flash Content:</strong> An attacker could extract an exact copy of the flash contents to an SD card and subsequently install malicious firmware. This firmware could read the device's UID and the <em>TC Code</em> (after the user enters it), then hash the content of the SD card instead of the flash memory. Although this would make the verification process slower, it introduces a potential security risk. To mitigate this vulnerability, it is advisable to avoid performing verifications while an SD card is inserted. </p>
+</li>
+</ul>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>The <em>TC Flash Hash</em> tool significantly enhances security by making it infeasible for attackers to tamper with firmware without being detected. By combining <em>TC Code</em> hashing, filling empty memory with random entropy, and verification of the the unique image and set of words, Krux allows the detection of any tamper attempts.</p>
+<p>Note: The strength of this defense strategy depends on maintaining a strong, confidential <em>TC Code</em>, removing the SD card before running <em>TC Flash Hash</em> and following usual security and privacy practices.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../tinyseed/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tiny Seed and other metal plates">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Tiny Seed and other metal plates
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Settings">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Settings
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Powered by <a href="https://embit.rocks/">embit</a>, the Bitcoin library for Python 3 and Micropython
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://bitcointalk.org/index.php?topic=5489022.0" target="_blank" rel="noopener" title="Send a message to the Bitcoin Forum" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M480 32c0-12.9-7.8-24.6-19.8-29.6S434.5.2 425.3 9.3L381.7 53c-48 48-113.1 75-181 75H64c-35.3 0-64 28.7-64 64v96c0 35.3 28.7 64 64 64v128c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32V352h8.7c67.9 0 133 27 181 75l43.6 43.6c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6V300.4c18.6-8.8 32-32.5 32-60.4s-13.4-51.6-32-60.4V32zm-64 76.7v262.6C357.2 317.8 280.5 288 200.7 288H192v-96h8.7c79.8 0 156.5-29.8 215.3-83.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://t.me/SC_Krux" target="_blank" rel="noopener" title="Join our community-led Telegram" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M248 8C111.033 8 0 119.033 0 256s111.033 248 248 248 248-111.033 248-248S384.967 8 248 8Zm114.952 168.66c-3.732 39.215-19.881 134.378-28.1 178.3-3.476 18.584-10.322 24.816-16.948 25.425-14.4 1.326-25.338-9.517-39.287-18.661-21.827-14.308-34.158-23.215-55.346-37.177-24.485-16.135-8.612-25 5.342-39.5 3.652-3.793 67.107-61.51 68.335-66.746.153-.655.3-3.1-1.154-4.384s-3.59-.849-5.135-.5q-3.283.746-104.608 69.142-14.845 10.194-26.894 9.934c-8.855-.191-25.888-5.006-38.551-9.123-15.531-5.048-27.875-7.717-26.8-16.291q.84-6.7 18.45-13.7 108.446-47.248 144.628-62.3c68.872-28.647 83.183-33.623 92.511-33.789 2.052-.034 6.639.474 9.61 2.885a10.452 10.452 0 0 1 3.53 6.716 43.765 43.765 0 0 1 .417 9.769Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://x.com/selfcustodykrux" target="_blank" rel="noopener" title="Follow us on X (Twitter)" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8l164.9-188.5L26.8 48h145.6l100.5 132.9L389.2 48zm-24.8 373.8h39.1L151.1 88h-42l255.3 333.8z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/selfcustody/krux" target="_blank" rel="noopener" title="Our code on Github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.expand", "navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>
