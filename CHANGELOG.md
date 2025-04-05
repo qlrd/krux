@@ -1,3 +1,12 @@
+# Changelog 25.XX.X - XXX 2025
+
+### CNC Printer
+- current code was failing, adapt it to latest qr_code array structure
+- uncomment, test, and adapt code to fit an openbuilds grbl 1.1 cnc and print directly to cnc via serial
+
+### SVG image export
+- add option to save encrypted qr as svg image
+
 # Changelog 25.03.0 - March 2025
 
 ### Taproot and WSH Miniscript support
