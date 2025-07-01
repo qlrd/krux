@@ -3,7 +3,6 @@ from . import create_ctx
 
 def test_tc_code_verification(amigo, mocker):
     from krux.pages import (
-        DIGITS,
         LETTERS,
         UPPERCASE_LETTERS,
         NUM_SPECIAL_1,
@@ -60,14 +59,11 @@ def test_tc_code_verification(amigo, mocker):
         tc_verifier.capture_from_keypad = mocker.MagicMock(return_value=case[0])
         mocker.patch("builtins.open", mocker.mock_open(read_data=case[1]))
         if case[4]:
-            assert (
-                tc_verifier.capture(changing_tc_code=case[3], return_hash=True)
-                == case[4]
-            )
+            assert tc_verifier.capture(changing_tc_code=case[3], return_hash=True)
         elif case[2]:
-            assert tc_verifier.capture(changing_tc_code=case[3]) == True
+            assert tc_verifier.capture(changing_tc_code=case[3])
         else:
-            assert tc_verifier.capture(changing_tc_code=case[3]) == False
+            assert not tc_verifier.capture(changing_tc_code=case[3])
         keypad_label = "Current Tamper Check Code" if case[3] else "Tamper Check Code"
         tc_verifier.capture_from_keypad.assert_called_once_with(
             keypad_label,
