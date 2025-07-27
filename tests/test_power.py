@@ -148,58 +148,183 @@ def test_reboot_without_pmu(mocker, m5stickv):
     krux.power.sys.exit.assert_called()
 
 
-def test_battery_charge_remaining_with_charging(mocker, multiple_devices):
+def test_battery_charge_m5stickv(mocker, m5stickv):
     from krux.power import PowerManager
-    import board
-
+   
     manager = PowerManager()
+    mocker.spy(manager.pmu, "get_battery_voltage")
+    mocker.spy(manager.pmu, "charging")
 
-    if manager.pmu is not None:
-        manager.pmu.get_battery_voltage.return_value = 4000
-        manager.pmu.charging.return_value = True
+    cases = [
+        (4200, 1.0),   # Fully charged
+        (4000, 0.75),  # Partially charged
+        (3600, 0.5),   # Half charged
+        (3000, 0.0),   # Empty
+    ]
 
-        charge = manager.battery_charge_remaining()
-
-        assert charge <= 0.9
-
-
-@pytest.mark.parametrize(
-    "voltage,expected",
-    [
-        (3000, 0.0),
-        (3600, 0.5),
-        (4200, 1.0),
-    ],
-)
-def test_battery_charge_remaining_formula(mocker, multiple_devices, voltage, expected):
-    from krux.power import PowerManager
-    import board
-
-    manager = PowerManager()
-
-    if manager.pmu is not None:
-        manager.pmu.get_battery_voltage.return_value = voltage
+    get_battery_voltage_calls = []
+    charging_calls = []
+    for case in cases:
+        manager.pmu.get_battery_voltage.return_value = case[0]
         manager.pmu.charging.return_value = False
 
+        manager.battery_charge_remaining()
         charge = manager.battery_charge_remaining()
+        get_battery_voltage_calls.append(mocker.call())
+        charging_calls.append(mocker.call())
+        assert charge <= case[1]
+        
+    manager.pmu.get_battery_voltage.assert_has_calls(get_battery_voltage_calls)
+    manager.pmu.charging.assert_has_calls(charging_calls)
 
-        if board.config["type"] in ("amigo", "m5stickv", "cube"):
-            assert 0.0 <= charge <= 1.0
-        else:
-            assert charge == expected
+
+def test_battery_charge_amigo(mocker, amigo):
+    from krux.power import PowerManager
+   
+    manager = PowerManager()
+    mocker.spy(manager.pmu, "get_battery_voltage")
+    mocker.spy(manager.pmu, "charging")
+
+    cases = [
+        (4200, 1.0),   # Fully charged
+        (4000, 0.75),  # Partially charged
+        (3600, 0.5),   # Half charged
+        (3000, 0.0),   # Empty
+    ]
+
+    get_battery_voltage_calls = []
+    charging_calls = []
+    for case in cases:
+        manager.pmu.get_battery_voltage.return_value = case[0]
+        manager.pmu.charging.return_value = False
+
+        manager.battery_charge_remaining()
+        charge = manager.battery_charge_remaining()
+        get_battery_voltage_calls.append(mocker.call())
+        charging_calls.append(mocker.call())
+        assert charge <= case[1]
+        
+    manager.pmu.get_battery_voltage.assert_has_calls(get_battery_voltage_calls)
+    manager.pmu.charging.assert_has_calls(charging_calls)
 
 
-def test_usb_connected(mocker, multiple_devices):
+def test_battery_charge_cube(mocker, cube):
+    from krux.power import PowerManager
+   
+    manager = PowerManager()
+    mocker.spy(manager.pmu, "get_battery_voltage")
+    mocker.spy(manager.pmu, "charging")
+
+    cases = [
+        (4200, 1.0),   # Fully charged
+        (4000, 0.75),  # Partially charged
+        (3600, 0.5),   # Half charged
+        (3000, 0.0),   # Empty
+    ]
+
+    get_battery_voltage_calls = []
+    charging_calls = []
+    for case in cases:
+        manager.pmu.get_battery_voltage.return_value = case[0]
+        manager.pmu.charging.return_value = False
+
+        manager.battery_charge_remaining()
+        charge = manager.battery_charge_remaining()
+        get_battery_voltage_calls.append(mocker.call())
+        charging_calls.append(mocker.call())
+        assert charge <= case[1]
+        
+    manager.pmu.get_battery_voltage.assert_has_calls(get_battery_voltage_calls)
+    manager.pmu.charging.assert_has_calls(charging_calls)
+
+# This test is for pottelntially new devices
+# that are not implemented yet in the firmware
+# and do not have the necessary linear approximation
+# # to calculate the battery charge remaining.
+# It will use the MAX_BATTERY_MV and MIN_BATTERY_MV
+# # to calculate the charge remaining. and work
+# as fallback.
+def test_battery_charge_pottentially_new_device(mocker, m5stickv):
+    from krux.power import PowerManager
+    from krux.kboard import kboard
+
+    # Mock the kboard to simulate a new device
+    kboard.is_m5stickv = False 
+    manager = PowerManager()
+
+    mocker.spy(manager.pmu, "get_battery_voltage")
+    mocker.spy(manager.pmu, "charging")
+
+    cases = [
+        (4200, 1.0),   # Fully charged
+        (4000, 0.75),  # Partially charged
+        (3600, 0.5),   # Half charged
+        (3000, 0.0),   # Empty
+    ]
+
+    get_battery_voltage_calls = []
+    charging_calls = []
+    for case in cases:
+        manager.pmu.get_battery_voltage.return_value = case[0]
+        manager.pmu.charging.return_value = False
+
+        manager.battery_charge_remaining()
+        charge = manager.battery_charge_remaining()
+        get_battery_voltage_calls.append(mocker.call())
+        charging_calls.append(mocker.call())
+        assert charge <= case[1]
+        
+    manager.pmu.get_battery_voltage.assert_has_calls(get_battery_voltage_calls)
+    manager.pmu.charging.assert_has_calls(charging_calls)
+
+def test_usb_connected_m5stickv(mocker, m5stickv):
     from krux.power import PowerManager
 
     manager = PowerManager()
+    manager.pmu.usb_connected = mocker.MagicMock(return_value=True)
+    assert manager.usb_connected()
+    manager.pmu.usb_connected.assert_called_once()
 
-    if manager.pmu is not None:
-        manager.pmu.usb_connected.return_value = True
-        assert manager.usb_connected() is True
-        manager.pmu.usb_connected.assert_called_once()
 
-        manager.pmu.usb_connected.reset_mock()
-        manager.pmu.usb_connected.return_value = False
-        assert manager.usb_connected() is False
-        manager.pmu.usb_connected.assert_called_once()
+def test_usb_disconnected_m5stickv(mocker, m5stickv):
+    from krux.power import PowerManager
+
+    manager = PowerManager()
+    manager.pmu.usb_connected = mocker.MagicMock(return_value=False)
+    assert not manager.usb_connected()
+    manager.pmu.usb_connected.assert_called_once()
+
+
+def test_usb_connected_amigo(mocker, amigo):
+    from krux.power import PowerManager
+
+    manager = PowerManager()
+    manager.pmu.usb_connected = mocker.MagicMock(return_value=True)
+    assert manager.usb_connected()
+    manager.pmu.usb_connected.assert_called_once()
+
+
+def test_usb_disconnected_amigo(mocker, amigo):
+    from krux.power import PowerManager
+
+    manager = PowerManager()
+    manager.pmu.usb_connected = mocker.MagicMock(return_value=False)
+    assert not manager.usb_connected()
+    manager.pmu.usb_connected.assert_called_once()
+
+def test_usb_connected_cube(mocker, cube):
+    from krux.power import PowerManager
+
+    manager = PowerManager()
+    manager.pmu.usb_connected = mocker.MagicMock(return_value=True)
+    assert manager.usb_connected()
+    manager.pmu.usb_connected.assert_called_once()
+
+
+def test_usb_disconnected_cube(mocker, cube):
+    from krux.power import PowerManager
+
+    manager = PowerManager()
+    manager.pmu.usb_connected = mocker.MagicMock(return_value=False)
+    assert not manager.usb_connected()
+    manager.pmu.usb_connected.assert_called_once()
