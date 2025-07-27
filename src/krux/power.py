@@ -59,11 +59,25 @@ class PowerManager:
 
     def battery_charge_remaining(self):
         """Returns the state of charge of the device's battery"""
+        # Initial charge value so we will not have a possible
+        # unbound value when calculating charge
+        charge = 1.0
+
+        # Start to calculate charge
         mv = int(self.pmu.get_battery_voltage())
+        
+        # For amigo and m5stickv he had done testing
+        # with full charges and found this linear approximation
+        # when full discharging and with voltage checks
         if kboard.is_amigo:
             charge = max(0, (mv - 3394.102415024943) / 416.73204356)
         elif kboard.is_m5stickv or kboard.is_cube:
             charge = max(0, (mv - 3131.427782118631) / 790.56172897)
+        
+        # new devices with battery will not have those numbers
+        # and will rely only on equation. It serves for
+        # new devices with battery. Before someone
+        # does the linear approximation calcs
         else:
             charge = max(0, ((mv - MIN_BATTERY_MV) / (MAX_BATTERY_MV - MIN_BATTERY_MV)))
 
