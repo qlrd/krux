@@ -41,9 +41,12 @@ from ..krux_settings import Settings
 from ..qr import FORMAT_UR
 from ..key import (
     Key,
+    P2WPKH,
     P2WSH,
     P2TR,
-    SCRIPT_LONG_NAMES,
+    SINGLESIG_SCRIPT_NAMES,
+    MULTISIG_SCRIPT_NAMES,
+    MINISCRIPT_SCRIPT_NAMES,
     TYPE_SINGLESIG,
     TYPE_MULTISIG,
     TYPE_MINISCRIPT,
@@ -301,11 +304,18 @@ class Login(Page):
         network = NETWORKS[Settings().wallet.network]
         account = 0
         if policy_type == TYPE_SINGLESIG:
-            script_type = SCRIPT_LONG_NAMES.get(Settings().wallet.script_type)
-        elif policy_type == TYPE_MINISCRIPT and Settings().wallet.script_type == P2TR:
-            script_type = P2TR
-        else:
-            script_type = P2WSH
+            script_type = SINGLESIG_SCRIPT_NAMES.get(
+                Settings().wallet.script_type, P2WPKH
+            )
+        elif policy_type == TYPE_MULTISIG:
+            script_type = MULTISIG_SCRIPT_NAMES.get(
+                Settings().wallet.script_type, P2WSH
+            )
+        else:  # policy_type == TYPE_MINISCRIPT:
+            script_type = MINISCRIPT_SCRIPT_NAMES.get(
+                Settings().wallet.script_type, P2WSH
+            )
+
         derivation_path = ""
 
         from ..wallet import Wallet

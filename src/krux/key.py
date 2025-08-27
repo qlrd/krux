@@ -70,11 +70,22 @@ P2WSH = "p2wsh"
 # address starts with bc1p (mainnet) or tb1p (testnet)
 P2TR = "p2tr"
 
-SCRIPT_LONG_NAMES = {
+SINGLESIG_SCRIPT_NAMES = {
     "Legacy - 44": P2PKH,
     "Nested Segwit - 49": P2SH_P2WPKH,
     "Native Segwit - 84": P2WPKH,
     "Taproot - 86": P2TR,
+}
+
+MULTISIG_SCRIPT_NAMES = {
+    "Legacy - 45": P2SH,
+    "Nested Segwit - 48": P2SH_P2WSH,
+    "Native Segwit - 48": P2WSH,
+}
+
+MINISCRIPT_SCRIPT_NAMES = {
+    "Native Segwit - 48": P2WSH,
+    "Taproot - 48": P2TR,
 }
 
 SINGLESIG_SCRIPT_PURPOSE = {
@@ -83,6 +94,14 @@ SINGLESIG_SCRIPT_PURPOSE = {
     P2WPKH: 84,
     P2TR: 86,
 }
+
+MULTISIG_SCRIPT_PURPOSE = {
+    P2SH: 45,
+    P2WSH: 48,
+    P2SH_P2WSH: 48,
+}
+
+MINISCRIPT_PURPOSE = 48
 
 TYPE_SINGLESIG = 0
 TYPE_MULTISIG = 1
@@ -94,13 +113,6 @@ POLICY_TYPE_IDS = {
     NAME_MINISCRIPT: TYPE_MINISCRIPT,
 }
 
-MULTISIG_SCRIPT_PURPOSE = {
-    P2SH: 45,
-    P2WSH: 48,
-    P2SH_P2WSH: 48,
-}
-
-MINISCRIPT_PURPOSE = 48
 
 FINGERPRINT_SYMBOL = "⊚"
 DERIVATION_PATH_SYMBOL = "↳"

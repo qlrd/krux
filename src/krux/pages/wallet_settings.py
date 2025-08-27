@@ -218,12 +218,12 @@ class WalletSettings(Page):
                 if new_policy_type is not None:
                     derivation_path = ""
                     policy_type = new_policy_type
-                    if policy_type == TYPE_SINGLESIG and script_type == P2WSH:
+                    if policy_type == TYPE_SINGLESIG and script_type not in SINGLESIG_SCRIPT_PURPOSE.items():
                         # If is single-sig, and script is p2wsh, force to pick a new type
                         script_type = self._script_type()
                         script_type = P2WPKH if script_type is None else script_type
 
-                    elif policy_type == TYPE_MULTISIG:
+                    elif policy_type == TYPE_MULTISIG and script_type not in MULTISIG_SCRIPT_PURPOSE.items():
                         # If is multisig,force to p2wsh if not set
                         script_type = self._script_type_multisig()
                         script_type = P2WSH if script_type is None else script_type

@@ -32,7 +32,7 @@ from .settings import (
     NAME_SINGLE_SIG,
     POLICY_TYPE_NAMES,
 )
-from .key import SCRIPT_LONG_NAMES
+from .key import SINGLESIG_SCRIPT_NAMES
 from .kboard import kboard
 
 BAUDRATES = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200]
@@ -132,7 +132,7 @@ class DefaultWallet(SettingsNamespace):
     network = CategorySetting("network", MAIN_TXT, [MAIN_TXT, TEST_TXT])
     policy_type = CategorySetting("policy_type", NAME_SINGLE_SIG, POLICY_TYPE_NAMES)
     script_type = CategorySetting(
-        "script_type", "Native Segwit - 84", list(SCRIPT_LONG_NAMES.keys())
+        "script_type", "Native Segwit - 84", list(SINGLESIG_SCRIPT_NAMES.keys())
     )
 
     def label(self, attr):
