@@ -218,12 +218,18 @@ class WalletSettings(Page):
                 if new_policy_type is not None:
                     derivation_path = ""
                     policy_type = new_policy_type
-                    if policy_type == TYPE_SINGLESIG and script_type not in SINGLESIG_SCRIPT_PURPOSE.items():
+                    if (
+                        policy_type == TYPE_SINGLESIG
+                        and script_type not in SINGLESIG_SCRIPT_PURPOSE.keys()
+                    ):
                         # If is single-sig, and script is p2wsh, force to pick a new type
                         script_type = self._script_type()
                         script_type = P2WPKH if script_type is None else script_type
 
-                    elif policy_type == TYPE_MULTISIG and script_type not in MULTISIG_SCRIPT_PURPOSE.items():
+                    elif (
+                        policy_type == TYPE_MULTISIG
+                        and script_type not in MULTISIG_SCRIPT_PURPOSE.keys()
+                    ):
                         # If is multisig,force to p2wsh if not set
                         script_type = self._script_type_multisig()
                         script_type = P2WSH if script_type is None else script_type
@@ -342,6 +348,14 @@ class WalletSettings(Page):
         return script_type
 
     def _derivation_path_str(self, policy_type, script_type, network, account):
+        # While BIP45 states that m/45h/<n> -- where <n> is the
+        # cosiger index (non hardened) -- this is a very old BIP
+        # and not many wallets support it. Also Seedsigner and
+        # Sparrow uses m/45h as default derivation path. Therefore
+        # to maintain compatibility with those wallets, use m/45h.
+        if policy_type == TYPE_MULTISIG and script_type == P2SH:
+            return P2SH_DEFAULT_DERIVATION
+
         derivation_path = "m/"
 
         # Add the purpose type to the derivation path in accordance with
@@ -356,14 +370,6 @@ class WalletSettings(Page):
 
         # The first derivation node is always hardened
         derivation_path += "h/"
-
-        # While BIP45 states that m/45h/<n> -- where <n> is the
-        # cosiger index (non hardened) -- this is a very old BIP
-        # and not many wallets support it. Also Seedsigner and
-        # Sparrow uses m/45h as default derivation path. Therefore
-        # to maintain compatibility with those wallets, use m/45h.
-        if policy_type == TYPE_MULTISIG and script_type == P2SH:
-            return P2SH_DEFAULT_DERIVATION
 
         # If another we're using BIP48 or BIP84,
         # we use the zeroth (for mainnet) or first (for testnet)

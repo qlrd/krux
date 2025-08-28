@@ -140,10 +140,9 @@ class Key:
         # Validate script type based on policy type
         # and set default script type if necessary
         # for multisig policies.
-        if policy_type == TYPE_MULTISIG and script_type not in (
-            P2SH,
-            P2SH_P2WSH,
-            P2WSH,
+        if (
+            policy_type == TYPE_MULTISIG
+            and script_type not in MULTISIG_SCRIPT_PURPOSE.keys()
         ):
             script_type = P2WSH
 
@@ -264,18 +263,20 @@ class Key:
             )
         if policy_type == TYPE_MULTISIG:
             if script_type == P2SH:
-                # As defined in BIP-45, there is no account.
-                # (m / 45' / cosigner_index / change / address_index)
-                # Instead there's a cosigner index and it is non-hardened.
-                # Use the account variable to keep the interface consistent.
-                return DER_MULTI_LEGACY % (MULTISIG_SCRIPT_PURPOSE[P2SH], account)
+                # As defined in BIP-45, there is no account but instead an
+                # cosigner index. But the majority of old implementations,
+                # or even recent ones like Sparrow, use without cosigner index.
+                if account is None:
+                    return "m/45h"
+                else:
+                    return DER_MULTI_LEGACY % (MULTISIG_SCRIPT_PURPOSE[P2SH], account)
             if script_type == P2SH_P2WSH:
                 # As defined in BIP-48, there is account.
                 # (m / 48' / coin_type' / account' / 1' / change / address_index)
                 return DER_MULTI_SEGWIT_NESTED % (
                     MULTISIG_SCRIPT_PURPOSE[P2SH_P2WSH],
                     network["bip32"],
-                    account,
+                    0 if account is None else account,
                 )
             if script_type == P2WSH:
                 # As defined in BIP-48, there is account.
@@ -283,10 +284,14 @@ class Key:
                 return DER_MULTI_SEGWIT_NATIVE % (
                     MULTISIG_SCRIPT_PURPOSE[P2WSH],
                     network["bip32"],
-                    account,
+                    0 if account is None else account,
                 )
         if policy_type == TYPE_MINISCRIPT:
-            return DER_MINISCRIPT % (MINISCRIPT_PURPOSE, network["bip32"], account)
+            return DER_MINISCRIPT % (
+                MINISCRIPT_PURPOSE,
+                network["bip32"],
+                0 if account is None else account,
+            )
 
         raise ValueError("Invalid policy type: %s" % policy_type)
 
