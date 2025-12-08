@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from typing import Callable
 import ujson as json
 import hashlib
 from krux import kef
@@ -39,6 +40,16 @@ class MnemonicStorage:
     def __init__(self) -> None:
         self.stored = {}
         self.stored_sd = {}
+        self._set_stored_value()
+
+    @staticmethod
+    def stretch_key(key, salt, iterations):
+        """Generate a pbkdf2_hmac/sha256 key given a base key, salt an a number of iterations"""
+        key = key if isinstance(key, bytes) else key.encode()
+        salt = salt if isinstance(salt, bytes) else salt.encode()
+        return hashlib.pbkdf2_hmac("sha256", key, salt, iterations)
+
+    def _set_stored_value(self):
         try:
             with SDHandler() as sd:
                 self.stored_sd = json.loads(sd.read(MNEMONICS_FILE))
@@ -50,19 +61,22 @@ class MnemonicStorage:
         except:
             pass
 
+    def _get_stored_value(self, mnemonic_id, sd_card=False):
+        try:
+            if sd_card:
+                return self.stored_sd.get(mnemonic_id)
+            else:
+                return self.stored.get(mnemonic_id)
+        except:
+            return None
+
     def _deprecated_decrypt(self, key, salt, iterations, mode, payload):
         """in-the-wild, some `seeds.json` may have encrypted mnemonic words"""
-
-        def stretch_key(key, salt, iterations):
-            key = key if isinstance(key, bytes) else key.encode()
-            salt = salt if isinstance(salt, bytes) else salt.encode()
-            return hashlib.pbkdf2_hmac("sha256", key, salt, iterations)
-
         if not (isinstance(iterations, int) and isinstance(payload, bytes)):
             return None
 
         mode_name = [k for k, v in kef.MODE_NUMBERS.items() if v == mode][0]
-        stretched_key = stretch_key(key, salt, iterations)
+        stretched_key = MnemonicStorage.stretch_key(key, salt, iterations)
         if mode_name == "AES-CBC":
             decryptor = kef.ucryptolib.aes(stretched_key, mode, payload[:16])
             payload = payload[16:]
@@ -85,27 +99,31 @@ class MnemonicStorage:
 
     def decrypt(self, key, mnemonic_id, sd_card=False):
         """Decrypt a selected encrypted mnemonic from a file"""
-        try:
-            if sd_card:
-                stored_value = self.stored_sd.get(mnemonic_id)
-            else:
-                stored_value = self.stored.get(mnemonic_id)
-        except:
+        stored_value = self._get_stored_value(mnemonic_id=mnemonic_id, sd_card=sd_card)
+        if stored_value is None:
             return None
 
         if stored_value.get("b64_kef"):
-            envelope = base_decode(stored_value["b64_kef"], 64)
+            try:
+                envelope = base_decode(stored_value["b64_kef"], 64)
+            except:
+                return None
+
             id_, version, iterations, data = kef.unwrap(envelope)
             decryptor = kef.Cipher(key, id_, iterations)
             decrypted = decryptor.decrypt(data, version)
-            if decrypted:
+            if decrypted is not None:
                 return bip39.mnemonic_from_bytes(decrypted)
         else:
             iterations = stored_value.get("key_iterations")
             version = stored_value.get("version")
             mode = kef.VERSIONS[version]["mode"]
             data = base_decode(stored_value.get("data"), 64)
-            return self._deprecated_decrypt(key, mnemonic_id, iterations, mode, data)
+            if data is not None:
+                return self._deprecated_decrypt(
+                    key, mnemonic_id, iterations, mode, data
+                )
+
         return None
 
     def store_encrypted_kef(self, mnemonic_id, kef_envelope, sd_card=False):
