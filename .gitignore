@@ -87,3 +87,10 @@ ktool-*
 
 # IDE files
 .vscode
+
+# Kapps files
+kapps/*.mpy
+kapps/*.mpy.sig
+
+# Krux metadata 
+src/krux/metadata.py

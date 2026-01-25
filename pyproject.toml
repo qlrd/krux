@@ -179,3 +179,48 @@ mpy-cross-all.ref = "mpy-all"
 missing-glyphs = "python ./firmware/font/missing_glyphs.py"
 fonts-missing.ref = "missing-glyphs"
 missing.ref = "missing-glyphs"
+
+# kapps tasks
+[tool.poe.tasks.kapp]
+help = "Compile a .py to .mpy kapp and sign it to .mpy.sig "
+sequence = [
+  { cmd = "./krux build kapp $file" },
+  { cmd = "./krux sign kapps/$file.mpy privkey.pem" }
+]
+
+  [[tool.poe.tasks.kapp.args]]
+  name = "file"
+  help = "filename from kapp/<file>.py"
+  options = ["-n", "--name"]
+
+# sign tools
+[tool.poe.tasks.metadata]
+help = "Change SIGNER_PUBKEY in src/krux/metadata.py. Usage: poe metadata <hexpubkey>"
+shell = """
+set -euo pipefail
+python3 - "$pubkey" <<'PY'
+import re, sys
+from pathlib import Path
+
+p = Path("src/krux/metadata.py")
+v = sys.argv[1].strip()
+
+s = p.read_text(encoding="utf-8")
+s2 = re.sub(
+    r'^(\\s*SIGNER_PUBKEY\\s*=\\s*)"[^"]*"',
+    r'\\1"' + v + '"',
+    s,
+    flags=re.M,
+)
+
+if s == s2:
+    raise SystemExit("SIGNER_PUBKEY not found")
+
+p.write_text(s2, encoding="utf-8")
+PY
+"""
+
+  [[tool.poe.tasks.metadata.args]]
+  name = "pubkey"
+  help = "hexpubkey from pubkey.pem"
+  options = ["-p", "--pubkey"]

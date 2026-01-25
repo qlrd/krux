@@ -59,7 +59,18 @@ RUN apt-get update -y && \
         python3-setuptools
 
 RUN mkdir -p /opt && \
-    git clone --depth 1 --recurse-submodules --shallow-submodules --branch v8.2.0-20190409 https://github.com/kendryte/kendryte-gnu-toolchain
+    GIT_TERMINAL_PROMPT=0 \
+    git clone --depth 1 --branch v8.2.0-20190409 https://github.com/kendryte/kendryte-gnu-toolchain
+
+RUN cd kendryte-gnu-toolchain && \
+    sed -i 's|https://github.com/bminor/binutils-gdb.git|https://github.com/riscvarchive/riscv-binutils-gdb.git|' .gitmodules && \
+    git submodule sync && \
+    git submodule update \
+      --init \
+      --recursive \
+      --depth 1
+
+
 
 RUN cd kendryte-gnu-toolchain && \
     export PATH=$PATH:/opt/kendryte-toolchain/bin && \
@@ -162,3 +173,70 @@ RUN cp /src/firmware/MaixPy/projects/"${DEVICE}"/build/firmware.bin .
 RUN sed -i -e 's/\r$//' *.sh
 
 RUN ./CLEAN.sh && ./BUILD.sh
+
+##############
+# build kapps
+# compilation of kapps inside kapps/ folders
+#############
+FROM build-software AS build-safeclib
+RUN apt-get update -y && apt-get install --no-install-recommends -y \
+    git make autoconf automake libtool pkg-config ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+RUN git clone --depth 1 https://github.com/rurban/safeclib.git
+WORKDIR /src/safeclib
+RUN ./build-aux/autogen.sh \
+ && ./configure --prefix=/opt/safeclib \
+ && make -j"$(nproc)" \
+ && make install
+RUN set -eux; \
+  ls -lah /opt/safeclib/lib; \
+  find /opt/safeclib/lib -maxdepth 1 -type f -name 'libsafec*' -print; \
+  (nm -D /opt/safeclib/lib/libsafec*.so* 2>/dev/null | grep -w memset_s) || true; \
+  nm -g /opt/safeclib/lib/libsafec*.a | grep -w memset_s
+
+
+FROM build-safeclib AS build-kapp
+ARG KAPP="nostr"
+
+RUN apt-get update -y && apt-get install --no-install-recommends -y \
+    git make python3 ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build-safeclib /opt/safeclib /opt/safeclib
+ENV LD_LIBRARY_PATH=/opt/safeclib/lib
+
+WORKDIR /src
+COPY . /src
+
+# Provide memset_s for host tool only (mpy-cross). No upstream repo edits.
+RUN set -eux; \
+  cat > /tmp/memset_s.c <<'EOF'
+#include <errno.h>
+#include <stddef.h>
+
+typedef size_t rsize_t;
+typedef int errno_t;
+
+errno_t memset_s(void *dest, rsize_t destsz, int ch, rsize_t count) {
+    if (!dest) return EINVAL;
+    if (count > destsz) return EINVAL;
+    volatile unsigned char *p = (volatile unsigned char *)dest;
+    while (count--) *p++ = (unsigned char)ch;
+    __asm__ __volatile__("" : : : "memory"); /* compiler barrier */
+    return 0;
+}
+EOF
+RUN set -eux; \
+  gcc -O2 -c /tmp/memset_s.c -o /tmp/memset_s.o; \
+  ar rcs /usr/local/lib/libmemset_s.a /tmp/memset_s.o; \
+  nm -g /usr/local/lib/libmemset_s.a | grep -w memset_s
+
+WORKDIR /src/firmware/MaixPy/components/micropython/core/mpy-cross
+RUN set -eux; \
+  make clean; \
+  make V=1 LIB="-lm /usr/local/lib/libmemset_s.a"; \
+  chmod +x ./mpy-cross
+
+RUN mkdir -p /out \
+ && ./mpy-cross -X heapsize=4194304 -O2 -o "/out/${KAPP}.mpy" "/src/kapps/${KAPP}.py"

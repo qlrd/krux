@@ -83,11 +83,20 @@ if [ "$1" == "build" ]; then
 
             # Create a container to extract the built firmware
             docker create --name extract-firmware krux-builder
-            docker cp extract-firmware:$BUILD_DIR/firmware.bin build/firmware.bin
-            docker cp extract-firmware:$BUILD_DIR/kboot.kfpkg build/kboot.kfpkg
-            docker rm extract-firmware
+
+            docker cp "extract-firmware:$BUILD_DIR" build/firmware.bin
+            docker cp "extract-firmware:$BUILD_DIR" build/kboot.kfpkg
+            docker rm -f extract-firmware
+
+        # Use $device variable to reuse the command to compile krux apps
+        elif [ "$device" == "kapp" ]; then
+            kapp="$3"
+            docker build . -t kapp --build-arg "KAPP=$kapp" --target build-kapp
+            docker create --name build-kapp-${kapp} kapp
+            docker cp "build-kapp-${kapp}:/out/${kapp}.mpy" "kapps/${kapp}.mpy"
+            docker rm -f "build-kapp-${kapp}"
         else
-            echo "Wrong or unsupported device name, use maixpy_devicename"
+            echo "Wrong or unsupported device name, use maixpy_<devicename> or kapp kapps/<name>.py"
         fi
     fi
 elif [ "$1" == "flash" -o "$1" == "boot" -o "$1" == "boot-terminal" -o "$1" == "erase" ]; then
