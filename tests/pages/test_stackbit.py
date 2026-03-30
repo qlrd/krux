@@ -1,7 +1,8 @@
 from .home_pages.test_home import tdata, create_ctx
 
 
-def test_export_mnemonic_stackbit(mocker, m5stickv, tdata):
+def test_export_mnemonic_stackbit_standard(mocker, m5stickv, tdata):
+    """Standard layout: 6 words per page, 4 pages for 24-word mnemonic"""
     from krux.pages.home_pages.mnemonic_backup import MnemonicsView
     from krux.wallet import Wallet
     from krux.input import BUTTON_ENTER, BUTTON_PAGE
@@ -12,30 +13,39 @@ def test_export_mnemonic_stackbit(mocker, m5stickv, tdata):
         [
             BUTTON_PAGE,
             BUTTON_PAGE,
-            BUTTON_ENTER,  # Other
+            BUTTON_ENTER,  # Other Formats
             BUTTON_PAGE,
             BUTTON_PAGE,
-            BUTTON_ENTER,  # Open Stackbit
+            BUTTON_ENTER,  # Open Stackbit → shows Standard/Vertical submenu
+            BUTTON_ENTER,  # Select Standard
             BUTTON_ENTER,  # PG2
             BUTTON_ENTER,  # PG3
-            BUTTON_ENTER,  # PG4
-            BUTTON_ENTER,  # Leave
-            BUTTON_PAGE,  # Go to "Back"
-            BUTTON_PAGE,
-            BUTTON_ENTER,  # click on back to return Mnemonic Backup
-            BUTTON_PAGE,
-            BUTTON_ENTER,  # click on back to return to home init screen
+            BUTTON_ENTER,  # PG4 (last page, exits loop)
+            BUTTON_ENTER,  # Leave (wait_for_button after last page)
+            BUTTON_PAGE,  # Back to stackbit submenu: Standard → Vertical
+            BUTTON_PAGE,  # Vertical → Back
+            BUTTON_ENTER,  # Select Back from stackbit submenu
+            BUTTON_PAGE,  # Back in Other Formats: Stackbit → Tinyseed
+            BUTTON_PAGE,  # Tinyseed → Back
+            BUTTON_ENTER,  # Select Back from Other Formats
+            BUTTON_PAGE,  # Back in mnemonic menu: Other Formats → Back
+            BUTTON_ENTER,  # Select Back from mnemonic menu
         ],
     ]
     ctx = create_ctx(mocker, case[2], case[0], case[1])
     mnemonics = MnemonicsView(ctx)
     mocker.spy(mnemonics, "stackbit")
+    mocker.spy(mnemonics, "_stackbit_standard")
+    mocker.spy(mnemonics, "_stackbit_vertical_compact")
     mnemonics.mnemonic()
     mnemonics.stackbit.assert_called_once()
+    mnemonics._stackbit_standard.assert_called_once()
+    mnemonics._stackbit_vertical_compact.assert_not_called()
     assert ctx.input.wait_for_button.call_count == len(case[2])
 
 
-def test_export_mnemonic_stackbit_amigo(mocker, amigo, tdata):
+def test_export_mnemonic_stackbit_standard_amigo(mocker, amigo, tdata):
+    """Standard layout on Amigo: 6 words per page, 4 pages for 24-word mnemonic"""
     from krux.pages.home_pages.mnemonic_backup import MnemonicsView
     from krux.wallet import Wallet
     from krux.input import BUTTON_ENTER, BUTTON_PAGE
@@ -46,26 +56,129 @@ def test_export_mnemonic_stackbit_amigo(mocker, amigo, tdata):
         [
             BUTTON_PAGE,
             BUTTON_PAGE,
-            BUTTON_ENTER,  # Other
+            BUTTON_ENTER,  # Other Formats
             BUTTON_PAGE,
             BUTTON_PAGE,
-            BUTTON_ENTER,  # Open Stackbit
+            BUTTON_ENTER,  # Open Stackbit → shows Standard/Vertical submenu
+            BUTTON_ENTER,  # Select Standard
             BUTTON_ENTER,  # PG2
             BUTTON_ENTER,  # PG3
-            BUTTON_ENTER,  # PG4
-            BUTTON_ENTER,  # Leave
-            BUTTON_PAGE,  # Go to "Back"
-            BUTTON_PAGE,
-            BUTTON_ENTER,  # click on back to return Mnemonic Backup
-            BUTTON_PAGE,
-            BUTTON_ENTER,  # click on back to return to home init screen
+            BUTTON_ENTER,  # PG4 (last page, exits loop)
+            BUTTON_ENTER,  # Leave (wait_for_button after last page)
+            BUTTON_PAGE,  # Back to stackbit submenu: Standard → Vertical
+            BUTTON_PAGE,  # Vertical → Back
+            BUTTON_ENTER,  # Select Back from stackbit submenu
+            BUTTON_PAGE,  # Back in Other Formats: Stackbit → Tinyseed
+            BUTTON_PAGE,  # Tinyseed → Back
+            BUTTON_ENTER,  # Select Back from Other Formats
+            BUTTON_PAGE,  # Back in mnemonic menu: Other Formats → Back
+            BUTTON_ENTER,  # Select Back from mnemonic menu
         ],
     ]
     ctx = create_ctx(mocker, case[2], case[0], case[1])
     mnemonics = MnemonicsView(ctx)
     mocker.spy(mnemonics, "stackbit")
+    mocker.spy(mnemonics, "_stackbit_standard")
     mnemonics.mnemonic()
     mnemonics.stackbit.assert_called_once()
+    mnemonics._stackbit_standard.assert_called_once()
+    assert ctx.input.wait_for_button.call_count == len(case[2])
+
+
+def test_export_mnemonic_stackbit_vertical(mocker, amigo, tdata):
+    """Grouped layout on Amigo: 2 words/group, 4 words/page, 6 pages for 24-word mnemonic.
+
+    Amigo uses FONT_WIDTH=12, so 3 words/group would overflow the word name text.
+    The layout auto-selects 2 words/group → 4 words/page → 6 pages.
+    """
+    from krux.pages.home_pages.mnemonic_backup import MnemonicsView
+    from krux.wallet import Wallet
+    from krux.input import BUTTON_ENTER, BUTTON_PAGE
+
+    # 24 words / 4 per page = 6 pages → 6 wait_for_button calls in display loop
+    case = [
+        Wallet(tdata.SINGLESIG_24_WORD_KEY),
+        None,
+        [
+            BUTTON_PAGE,
+            BUTTON_PAGE,
+            BUTTON_ENTER,  # Other Formats
+            BUTTON_PAGE,
+            BUTTON_PAGE,
+            BUTTON_ENTER,  # Open Stackbit → shows Standard/Vertical submenu
+            BUTTON_PAGE,  # Navigate to Vertical
+            BUTTON_ENTER,  # Select Vertical → dispatches to _stackbit_vertical_default
+            BUTTON_ENTER,  # Advance from page 1 (words  1-4)
+            BUTTON_ENTER,  # Advance from page 2 (words  5-8)
+            BUTTON_ENTER,  # Advance from page 3 (words  9-12)
+            BUTTON_ENTER,  # Advance from page 4 (words 13-16)
+            BUTTON_ENTER,  # Advance from page 5 (words 17-20)
+            BUTTON_ENTER,  # Advance from page 6 (words 21-24)
+            BUTTON_PAGE,  # Back to stackbit submenu: Vertical → Back
+            BUTTON_ENTER,  # Select Back from stackbit submenu
+            BUTTON_PAGE,  # Back in Other Formats: Stackbit → Tinyseed
+            BUTTON_PAGE,  # Tinyseed → Back
+            BUTTON_ENTER,  # Select Back from Other Formats
+            BUTTON_PAGE,  # Back in mnemonic menu: Other Formats → Back
+            BUTTON_ENTER,  # Select Back from mnemonic menu
+        ],
+    ]
+    ctx = create_ctx(mocker, case[2], case[0], case[1])
+    mnemonics = MnemonicsView(ctx)
+    mocker.spy(mnemonics, "stackbit")
+    mocker.spy(mnemonics, "_stackbit_vertical")
+    mocker.spy(mnemonics, "_stackbit_vertical_default")
+    mnemonics.mnemonic()
+    mnemonics.stackbit.assert_called_once()
+    mnemonics._stackbit_vertical.assert_called_once()
+    mnemonics._stackbit_vertical_default.assert_called_once()
+    assert ctx.input.wait_for_button.call_count == len(case[2])
+
+
+def test_export_mnemonic_stackbit_vertical_compact(mocker, m5stickv, tdata):
+    """Dense layout on M5StickV: 6 words per page, 4 pages for 24-word mnemonic.
+
+    2 words side-by-side × 3 rows, no word names or BIP39 codes.
+    """
+    from krux.pages.home_pages.mnemonic_backup import MnemonicsView
+    from krux.wallet import Wallet
+    from krux.input import BUTTON_ENTER, BUTTON_PAGE
+
+    # 24 words / 6 per page = 4 pages → 4 wait_for_button calls in display loop
+    case = [
+        Wallet(tdata.SINGLESIG_24_WORD_KEY),
+        None,
+        [
+            BUTTON_PAGE,
+            BUTTON_PAGE,
+            BUTTON_ENTER,  # Other Formats
+            BUTTON_PAGE,
+            BUTTON_PAGE,
+            BUTTON_ENTER,  # Open Stackbit → shows Standard/Vertical submenu
+            BUTTON_PAGE,  # Navigate to Vertical
+            BUTTON_ENTER,  # Select Vertical → dispatches to _stackbit_vertical_compact
+            BUTTON_ENTER,  # Advance from page 1 (words  1-6)
+            BUTTON_ENTER,  # Advance from page 2 (words  7-12)
+            BUTTON_ENTER,  # Advance from page 3 (words 13-18)
+            BUTTON_ENTER,  # Advance from page 4 (words 19-24)
+            BUTTON_PAGE,  # Back to stackbit submenu: Vertical → Back
+            BUTTON_ENTER,  # Select Back from stackbit submenu
+            BUTTON_PAGE,  # Back in Other Formats: Stackbit → Tinyseed
+            BUTTON_PAGE,  # Tinyseed → Back
+            BUTTON_ENTER,  # Select Back from Other Formats
+            BUTTON_PAGE,  # Back in mnemonic menu: Other Formats → Back
+            BUTTON_ENTER,  # Select Back from mnemonic menu
+        ],
+    ]
+    ctx = create_ctx(mocker, case[2], case[0], case[1])
+    mnemonics = MnemonicsView(ctx)
+    mocker.spy(mnemonics, "stackbit")
+    mocker.spy(mnemonics, "_stackbit_vertical")
+    mocker.spy(mnemonics, "_stackbit_vertical_compact")
+    mnemonics.mnemonic()
+    mnemonics.stackbit.assert_called_once()
+    mnemonics._stackbit_vertical.assert_called_once()
+    mnemonics._stackbit_vertical_compact.assert_called_once()
     assert ctx.input.wait_for_button.call_count == len(case[2])
 
 
