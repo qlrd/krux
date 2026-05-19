@@ -81,8 +81,15 @@ Enter the BIP39 mnemonic word's numbers (1-2048) in binary format, toggling nece
 Enter the BIP39 mnemonic word's numbers (1-2048) using the Stackbit 1248 metal plate backup method, where each of the four digits of the word's number is a sum of the numbers marked (punched) 1, 2, 4, or 8. For example, to enter the word "oyster", number 1268, you must punch (1)(2)(2,4)(8).
 
 <div style="clear: both"></div>
+<img src="../../../img/maixpy_m5stickv/load-mnemonic-via-stackbit-vertical-filled-250.png" align="right" class="m5stickv">
+<img src="../../../img/maixpy_amigo/load-mnemonic-via-stackbit-vertical-filled-300.png" align="right" class="amigo">
+
+Vertical layout transposes the grid, with rows = weights (1,2,4,8) and columns = digits.
+
+<div style="clear: both"></div>
 
 ### From Storage
+
 <img src="../../../img/maixpy_m5stickv/load-mnemonic-storage-options-250.png" align="right" class="m5stickv">
 <img src="../../../img/maixpy_amigo/load-mnemonic-storage-options-300.png" align="right" class="amigo">
 
@@ -91,7 +98,9 @@ You can also retrieve [encrypted mnemonics previously stored](./navigating-the-m
 <div style="clear: both"></div>
 
 ## Confirm Wallet Setup
+
 ### Confirm Mnemonic Words
+
 <img src="../../../img/maixpy_m5stickv/load-mnemonic-seq-mnemonic-250.png" align="right" class="m5stickv">
 <img src="../../../img/maixpy_amigo/load-mnemonic-seq-mnemonic-300.png" align="right" class="amigo">
 
@@ -106,6 +115,7 @@ If you see an asterisk (`*`) in the header, it means this is a [double mnemonic]
 <div style="clear: both"></div>
 
 ### (Optional) Edit Mnemonic
+
 <img src="../../../img/maixpy_m5stickv/load-mnemonic-seq-mnemonic-edited-wrong-250.png" align="right" class="m5stickv">
 <img src="../../../img/maixpy_amigo/load-mnemonic-seq-mnemonic-edited-wrong-300.png" align="right" class="amigo">
 
@@ -114,6 +124,7 @@ If you make a mistake while loading a mnemonic, you can easily edit it. Simply t
 <div style="clear: both"></div>
 
 ### Confirm Wallet Attributes
+
 <img src="../../../img/maixpy_m5stickv/load-mnemonic-seq-overview-250.png" align="right" class="m5stickv">
 <img src="../../../img/maixpy_amigo/load-mnemonic-seq-overview-300.png" align="right" class="amigo">
 
@@ -123,41 +134,48 @@ After confirming your mnemonic, a screen with an **information box at the top** 
 
 #### The Attributes:
 
-##### Fingerprint 
-* :material-fingerprint: ` 73c5da0a `:
-The [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) master wallet's fingerprint helps you make sure you entered the correct mnemonic and passphrase (optional) and will load the expected wallet. The fingerprint is the best checksum you can have, it's good to note it down.
+##### Fingerprint
 
-##### Network 
-* ` Mainnet `:
-Check if you are loading a `Testnet` or `Mainnet` wallet.
+- :material-fingerprint: `73c5da0a`:
+  The [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) master wallet's fingerprint helps you make sure you entered the correct mnemonic and passphrase (optional) and will load the expected wallet. The fingerprint is the best checksum you can have, it's good to note it down.
+
+##### Network
+
+- `Mainnet`:
+  Check if you are loading a `Testnet` or `Mainnet` wallet.
 
 ##### Policy Type
-* Check the wallet's policy type: `Single-sig`, `Multisig`, `Miniscript`, or `TR Miniscript` (Taproot).
+
+- Check the wallet's policy type: `Single-sig`, `Multisig`, `Miniscript`, or `TR Miniscript` (Taproot).
 
 ##### Derivation Path
-* :material-arrow-right-bottom: ` m/84h/0h/0h `:
-The derivation path is a sequence of numbers, or "nodes", that define the script type, network, and account index of your wallet.
-    * **Script Type** `84h`: The first number defines the script type. The default is `84h`, corresponding to a Native Segwit wallet. Other values include:
-        * `44h` for Legacy
-        * `49h` for Nested Segwit
-        * `86h` for Taproot
-        * `48h` for Multisig
-    * **Network** `0h`: The second number defines the network:
-        * `0h` for Mainnet
-        * `1h` for Testnet
-    * **Account Index** `0h`: The third number is the account index, with `0h` being the default.
-    * **Additional**: For multisig wallets, a fourth node with the value `2h` is added to the derivation path.
 
-    Default Miniscript derivation path is the same as for multisig: ` m/48'/0h/0h/2h `, but they can be fully customized
+- :material-arrow-right-bottom: `m/84h/0h/0h`:
+  The derivation path is a sequence of numbers, or "nodes", that define the script type, network, and account index of your wallet.
+  _ **Script Type** `84h`: The first number defines the script type. The default is `84h`, corresponding to a Native Segwit wallet. Other values include:
+  _ `44h` for Legacy
+  _ `49h` for Nested Segwit
+  _ `86h` for Taproot
+  _ `48h` for Multisig
+  _ **Network** `0h`: The second number defines the network:
+  _ `0h` for Mainnet
+  _ `1h` for Testnet
+  _ **Account Index** `0h`: The third number is the account index, with `0h` being the default.
+  _ **Additional**: For multisig wallets, a fourth node with the value `2h` is added to the derivation path.
+
+      Default Miniscript derivation path is the same as for multisig: ` m/48'/0h/0h/2h `, but they can be fully customized
 
 ##### Passphrase
-* ` No Passphrase `:
-Informs if the wallet has a passphrase. Adding or changing the passphrase results in a completely different wallet and fingerprint.
+
+- `No Passphrase`:
+  Informs if the wallet has a passphrase. Adding or changing the passphrase results in a completely different wallet and fingerprint.
 
 ### Customize Wallet
+
 It is possible to change any of the **wallet's attributes** (it will be possible to change them later too, after loading). To load it faster next time, some default wallet attributes can be set in [settings](../settings.md), they are: `Network`, `Policy Type` and `Script Type`.
 
 #### Passphrase
+
 <img src="../../../img/maixpy_m5stickv/passphrase-load-options-250.png" align="right" class="m5stickv">
 <img src="../../../img/maixpy_amigo/passphrase-load-options-300.png" align="right" class="amigo">
 
@@ -170,6 +188,7 @@ For scanning, you can generate an offline passphrase QR code using the [Datum to
 <div style="clear: both"></div>
 
 #### Customize
+
 <img src="../../../img/maixpy_m5stickv/wallet-customization-options-250.png" align="right" class="m5stickv">
 <img src="../../../img/maixpy_amigo/wallet-customization-options-300.png" align="right" class="amigo">
 
